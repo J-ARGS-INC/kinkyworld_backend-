@@ -1,0 +1,20 @@
+# Environment — never commit real secrets
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+env/
+
+# Uploads (user content)
+uploads/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
