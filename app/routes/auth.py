@@ -22,6 +22,7 @@ def register(body: schemas.RegisterRequest, db: Session = Depends(get_db)):
         phone=body.phone,
         hashed_password=hash_password(body.password),
         role="member",
+        is_active=True,
     )
     db.add(user)
     db.commit()

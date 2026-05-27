@@ -21,7 +21,7 @@ class User(Base):
     full_name = Column(String)
     phone = Column(String)
     role = Column(String, default="member")
-    is_active = Column(Boolean, default=False)
+    is_active = Column(Boolean, default=True)
     hashed_password = Column(String, nullable=False)
     avatar_url = Column(String)
     membership_since = Column(DateTime, default=datetime.utcnow)
