@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import Optional, List
-from pydantic import BaseModel, EmailStr
+from typing import Optional, List, Literal
+from pydantic import BaseModel, EmailStr, field_validator
 
 
 # ── Auth ─────────────────────────────────────────────────
@@ -9,6 +9,13 @@ class RegisterRequest(BaseModel):
     password: str
     full_name: str
     phone: Optional[str] = None
+
+    @field_validator("password")
+    @classmethod
+    def password_strength(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters")
+        return v
 
 
 class LoginRequest(BaseModel):
@@ -159,7 +166,6 @@ class BookingCreate(BaseModel):
     guest_name: str
     guest_email: EmailStr
     guest_phone: Optional[str] = None
-    total_price: float
 
 
 class BookingOut(BaseModel):
@@ -186,7 +192,7 @@ class BookingOut(BaseModel):
 
 
 class BookingStatusUpdate(BaseModel):
-    status: str
+    status: Literal["pending", "confirmed", "cancelled", "rejected", "completed"]
     admin_notes: Optional[str] = None
 
 

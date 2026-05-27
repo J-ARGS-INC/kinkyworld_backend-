@@ -14,9 +14,7 @@ log = logging.getLogger("kinkyworld.auth")
 
 @router.post("/register", response_model=schemas.TokenResponse)
 def register(body: schemas.RegisterRequest, db: Session = Depends(get_db)):
-    log.info(f"REGISTER attempt: {body.email}")
     if db.query(models.User).filter(models.User.email == body.email).first():
-        log.warning(f"REGISTER failed — email already exists: {body.email}")
         raise HTTPException(status_code=400, detail="Email already registered")
     user = models.User(
         email=body.email,
@@ -28,29 +26,17 @@ def register(body: schemas.RegisterRequest, db: Session = Depends(get_db)):
     db.add(user)
     db.commit()
     db.refresh(user)
-    log.info(f"REGISTER success: {body.email} | id={user.id}")
+    log.info(f"REGISTER success: id={user.id}")
     token = create_access_token({"sub": user.id})
     return {"access_token": token, "user": user}
 
 
 @router.post("/login", response_model=schemas.TokenResponse)
 def login(body: schemas.LoginRequest, db: Session = Depends(get_db)):
-    log.info(f"LOGIN attempt: '{body.email}'")
     user = db.query(models.User).filter(models.User.email == body.email).first()
-
-    if not user:
-        log.warning(f"LOGIN failed — no user found with email: '{body.email}'")
+    if not user or not verify_password(body.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
-
-    log.info(f"LOGIN user found: id={user.id} | role={user.role} | is_active={user.is_active}")
-
-    pwd_ok = verify_password(body.password, user.hashed_password)
-    log.info(f"LOGIN password check: {'PASS' if pwd_ok else 'FAIL'}")
-
-    if not pwd_ok:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
-
-    log.info(f"LOGIN success: {body.email} | role={user.role} | active={user.is_active}")
+    log.info(f"LOGIN success: id={user.id} role={user.role}")
     token = create_access_token({"sub": user.id})
     return {"access_token": token, "user": user}
 

@@ -1,6 +1,5 @@
 import os
 import uuid
-import shutil
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
@@ -73,14 +72,17 @@ async def upload_room_image(
     room = db.query(models.Room).filter(models.Room.id == room_id).first()
     if not room:
         raise HTTPException(status_code=404, detail="Room not found")
-    ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else "jpg"
+    ext = file.filename.rsplit(".", 1)[-1].lower() if "." in (file.filename or "") else "jpg"
     if ext not in ("jpg", "jpeg", "png", "webp"):
         raise HTTPException(status_code=400, detail="Invalid file type")
+    contents = await file.read()
+    if len(contents) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File too large (max 10MB)")
     filename = f"room_{room_id[:8]}_{uuid.uuid4().hex[:8]}.{ext}"
     path = os.path.join(settings.UPLOAD_DIR, filename)
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     with open(path, "wb") as f:
-        shutil.copyfileobj(file.file, f)
+        f.write(contents)
     url = f"/uploads/{filename}"
     images = list(room.images or [])
     images.append(url)

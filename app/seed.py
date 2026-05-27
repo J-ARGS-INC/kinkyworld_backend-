@@ -2,12 +2,10 @@ import logging
 from sqlalchemy.orm import Session
 from .database import SessionLocal
 from .auth import hash_password, verify_password
+from .config import settings
 from . import models
 
 _log = logging.getLogger("kinkyworld.seed")
-
-ADMIN_EMAIL = "admin@kinkyworld.com"
-ADMIN_PASSWORD = "89HoDk0pwqEjr5KZmQhiCUPuISMnfcq1"
 
 
 def run():
@@ -28,16 +26,14 @@ def _seed_admin(db: Session):
         _log.info(f"Admin already exists — email={existing.email}, skipping seed")
         return
     db.add(models.User(
-        email=ADMIN_EMAIL,
+        email=settings.ADMIN_EMAIL,
         full_name="Admin",
-        hashed_password=hash_password(ADMIN_PASSWORD),
+        hashed_password=hash_password(settings.ADMIN_PASSWORD),
         role="admin",
         is_active=True,
     ))
     db.commit()
-    admin = db.query(models.User).filter(models.User.email == ADMIN_EMAIL).first()
-    ok = verify_password(ADMIN_PASSWORD, admin.hashed_password)
-    _log.info(f"Admin created — email={ADMIN_EMAIL} password_check={'PASS' if ok else 'FAIL'}")
+    _log.info(f"Admin created — email={settings.ADMIN_EMAIL}")
 
 
 def _seed_locations(db: Session):

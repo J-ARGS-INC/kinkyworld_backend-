@@ -24,6 +24,12 @@ async def lifespan(app: FastAPI):
     _log = logging.getLogger("kinkyworld")
     ok = test_connection()
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+    # Mount uploads now that the directory is guaranteed to exist
+    from fastapi.staticfiles import StaticFiles as _SF
+    try:
+        app.mount("/uploads", _SF(directory=settings.UPLOAD_DIR), name="uploads")
+    except Exception:
+        pass  # already mounted (e.g. hot-reload)
     if ok:
         # Create tables one-by-one so a pre-existing table (from Supabase schema.sql)
         # doesn't abort the whole create_all and skip the seed.
@@ -79,11 +85,10 @@ app.include_router(content.router)
 app.include_router(contact.router)
 
 
-# Mount uploads after directory is guaranteed to exist (created in lifespan)
-import os as _os
-if _os.path.isdir(settings.UPLOAD_DIR):
-    from fastapi.staticfiles import StaticFiles as _SF
-    app.mount("/uploads", _SF(directory=settings.UPLOAD_DIR), name="uploads")
+
+@app.get("/")
+def root():
+    return {"service": "Kinky World API", "status": "running", "health": "/health"}
 
 
 @app.get("/health")

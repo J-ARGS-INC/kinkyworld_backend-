@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     DB_PASSWORD: str = "kinkyworld"
     SECRET_KEY: str = "dev-secret-change-in-production"
     ADMIN_KEY: str = "change-this-admin-key"
+    ADMIN_EMAIL: str = "admin@kinkyworld.com"
+    ADMIN_PASSWORD: str = "change-this-admin-password"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 10080
     UPLOAD_DIR: str = os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads")
