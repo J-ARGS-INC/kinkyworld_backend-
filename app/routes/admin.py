@@ -82,3 +82,15 @@ def deactivate_user(user_id: str, db: Session = Depends(get_db), _=Depends(requi
     user.is_active = False
     db.commit()
     return {"id": user.id, "is_active": False}
+
+
+@router.delete("/users/{user_id}")
+def delete_user(user_id: str, db: Session = Depends(get_db), _=Depends(require_admin)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.role == "admin":
+        raise HTTPException(status_code=403, detail="Cannot delete admin accounts")
+    db.delete(user)
+    db.commit()
+    return {"ok": True}

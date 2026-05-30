@@ -167,6 +167,19 @@ class ContactInquiry(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class Testimonial(Base):
+    __tablename__ = "testimonials"
+
+    id = Column(UUID(as_uuid=False), primary_key=True, default=gen_uuid)
+    name = Column(String, nullable=False)
+    role = Column(String)
+    quote = Column(Text, nullable=False)
+    rating = Column(Integer, default=5)
+    is_active = Column(Boolean, default=True)
+    sort_order = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class SiteContent(Base):
     __tablename__ = "site_content"
 

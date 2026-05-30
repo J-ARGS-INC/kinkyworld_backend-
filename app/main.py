@@ -13,7 +13,7 @@ from fastapi.staticfiles import StaticFiles
 
 from .database import engine, Base, test_connection
 from .config import settings
-from .routes import auth, rooms, packages, bookings, messages, gallery, locations, admin, content, contact
+from .routes import auth, rooms, packages, bookings, messages, gallery, locations, admin, content, contact, testimonials
 
 # Seed data
 from . import seed
@@ -83,6 +83,7 @@ app.include_router(locations.router)
 app.include_router(admin.router)
 app.include_router(content.router)
 app.include_router(contact.router)
+app.include_router(testimonials.router)
 
 
 

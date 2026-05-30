@@ -16,6 +16,7 @@ def run():
         _seed_rooms(db)
         _seed_packages(db)
         _seed_content(db)
+        _seed_testimonials(db)
     finally:
         db.close()
 
@@ -192,4 +193,35 @@ def _seed_content(db: Session):
     ]
     for page, key, value, vtype in entries:
         db.add(models.SiteContent(page=page, key=key, value=value, value_type=vtype))
+    db.commit()
+
+
+def _seed_testimonials(db: Session):
+    if db.query(models.Testimonial).first():
+        return
+    testimonials = [
+        {
+            "name": "A. Blackwood",
+            "role": "Member — New York, USA",
+            "quote": "The dungeon suite exceeded every expectation. Fully equipped, immaculately clean, and the staff's discretion was impeccable. The St. Andrew's Cross alone is worth every cent.",
+            "rating": 5,
+            "sort_order": 0,
+        },
+        {
+            "name": "S. Mercer",
+            "role": "Member — London, UK",
+            "quote": "We booked the 2-day hotel + dungeon package. The complimentary champagne on arrival, the premium suite, and the private dungeon access made for an unforgettable weekend.",
+            "rating": 5,
+            "sort_order": 1,
+        },
+        {
+            "name": "V. Hartmann",
+            "role": "Member — Berlin, Germany",
+            "quote": "What sets Kinky World apart is the absolute privacy and professionalism. No judgement, only luxury. The Main Room's equipment is top-tier and the surprise elements in the dungeon are extraordinary.",
+            "rating": 5,
+            "sort_order": 2,
+        },
+    ]
+    for t in testimonials:
+        db.add(models.Testimonial(**t))
     db.commit()

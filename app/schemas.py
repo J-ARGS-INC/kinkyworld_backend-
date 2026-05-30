@@ -265,4 +265,36 @@ class ContactInquiryOut(BaseModel):
         from_attributes = True
 
 
+# ── Testimonials ─────────────────────────────────────────
+class TestimonialOut(BaseModel):
+    id: str
+    name: str
+    role: Optional[str]
+    quote: str
+    rating: int
+    is_active: bool
+    sort_order: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class TestimonialCreate(BaseModel):
+    name: str
+    role: Optional[str] = None
+    quote: str
+    rating: int = 5
+    sort_order: int = 0
+
+
+class TestimonialUpdate(BaseModel):
+    name: Optional[str] = None
+    role: Optional[str] = None
+    quote: Optional[str] = None
+    rating: Optional[int] = None
+    is_active: Optional[bool] = None
+    sort_order: Optional[int] = None
+
+
 TokenResponse.model_rebuild()
