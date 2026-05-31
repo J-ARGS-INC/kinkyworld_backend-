@@ -240,7 +240,7 @@ class GalleryImageOut(BaseModel):
 
 # ── Site Content ─────────────────────────────────────────
 class SiteContentUpdate(BaseModel):
-    value: str
+    value: Optional[str] = ""
     value_type: Optional[str] = None
 
 

@@ -62,7 +62,11 @@ app = FastAPI(
 _raw_origins = settings.FRONTEND_URL or ""
 _origins = list(
     {o.strip() for o in _raw_origins.split(",") if o.strip()}
-    | {"http://localhost:5173"}
+    | {
+        "http://localhost:5173",
+        "https://kinkyworlddungeonshotels.com",
+        "https://www.kinkyworlddungeonshotels.com",
+    }
 )
 app.add_middleware(
     CORSMiddleware,
