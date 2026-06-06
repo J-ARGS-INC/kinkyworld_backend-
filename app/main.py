@@ -43,7 +43,7 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             _log.error(f"Seed failed: {e}", exc_info=True)
     else:
-        _log.error("DB unreachable — seed skipped")
+        _log.error("DB unreachable seed skipped")
     yield
 
 

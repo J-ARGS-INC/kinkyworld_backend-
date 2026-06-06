@@ -233,9 +233,17 @@ class GalleryImageOut(BaseModel):
     category: str
     sort_order: int
     is_active: bool
+    created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
+
+
+class GalleryImageUpdate(BaseModel):
+    title: Optional[str] = None
+    category: Optional[str] = None
+    sort_order: Optional[int] = None
+    is_active: Optional[bool] = None
 
 
 # ── Site Content ─────────────────────────────────────────

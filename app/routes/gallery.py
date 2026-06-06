@@ -25,6 +25,15 @@ def get_gallery(db: Session = Depends(get_db)):
     )
 
 
+@router.get("/admin", response_model=List[schemas.GalleryImageOut])
+def get_gallery_admin(db: Session = Depends(get_db), _=Depends(require_admin)):
+    return (
+        db.query(models.GalleryImage)
+        .order_by(models.GalleryImage.sort_order, models.GalleryImage.created_at)
+        .all()
+    )
+
+
 @router.post("/upload", response_model=schemas.GalleryImageOut)
 async def upload_image(
     file: UploadFile = File(...),
@@ -56,6 +65,23 @@ async def upload_image(
         uploaded_by=admin.id,
     )
     db.add(image)
+    db.commit()
+    db.refresh(image)
+    return image
+
+
+@router.patch("/{image_id}", response_model=schemas.GalleryImageOut)
+def update_image(
+    image_id: str,
+    body: schemas.GalleryImageUpdate,
+    db: Session = Depends(get_db),
+    _=Depends(require_admin),
+):
+    image = db.query(models.GalleryImage).filter(models.GalleryImage.id == image_id).first()
+    if not image:
+        raise HTTPException(status_code=404, detail="Image not found")
+    for field, value in body.model_dump(exclude_unset=True).items():
+        setattr(image, field, value)
     db.commit()
     db.refresh(image)
     return image
